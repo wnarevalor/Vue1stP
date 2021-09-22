@@ -1,0 +1,2 @@
+created components and sent props from parent to child, also from "child to parent" using events and callback functions
+added sass to cli created vue project

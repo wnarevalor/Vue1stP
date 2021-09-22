@@ -1,0 +1,15 @@
+{
+  "home": {
+    "listen": "Escucha tu musica preferida!"
+  },
+  "manage": {
+    "my_songs": "Mis Canciones"
+  },
+  "register": {
+    "TOS": "",
+    "accept": ""
+  },
+  "song": {
+    "comment_count": "Sin comentarios | 1 Comentario | {count} Comentarios"
+  }
+}
