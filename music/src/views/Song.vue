@@ -132,7 +132,10 @@ export default {
     };
   },
   computed: {
-    ...mapState(['userLoggedIn']),
+    // ...mapState(['userLoggedIn']),
+    ...mapState({
+      userLoggedIn: (state) => state.auth.userLoggedIn,
+    }),
     sortedComments() {
       return this.comments
         .slice()
@@ -143,17 +146,19 @@ export default {
         );
     },
   },
-  async created() {
-    const docSnapshot = await songsCollection.doc(this.$route.params.id).get();
-    if (!docSnapshot.exists) {
-      this.$router.push({ name: 'home' });
-      return;
-    }
-    const { sort } = this.$route.query;
+  async beforeRouteEnter(to, from, next) {
+    const docSnapshot = await songsCollection.doc(to.params.id).get();
+    next((vm) => {
+      if (!docSnapshot.exists) {
+        vm.$router.push({ name: 'home' });
+        return;
+      }
+      const { sort } = vm.$route.query;
 
-    this.sort = sort === '1' || sort === '2' ? sort : '1';
-    this.song = docSnapshot.data();
-    this.getComments();
+      vm.sort = sort === '1' || sort === '2' ? sort : '1';
+      vm.song = docSnapshot.data();
+      vm.getComments();
+    });
   },
   methods: {
     ...mapActions(['newSong']),
@@ -172,14 +177,13 @@ export default {
       };
 
       await commentsCollection.add(comment);
-
-      // const snapchat = await commentsCollection
+      this.song.comment_count += 1;
+      // const snappy = await commentsCollection
       //   .where('sid', '==', comment.sid)
       //   .get();
-      // if (snapchat) {
-      //   this.song.comment_count = snapchat.size;
+      // if (snappy) {
+      //   this.song.comment_count = snappy.size;
       // }
-      this.song.comment_count += 1;
       await songsCollection.doc(this.$route.params.id).update({
         comment_count: this.song.comment_count,
       });
