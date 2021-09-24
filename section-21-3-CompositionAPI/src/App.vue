@@ -12,12 +12,14 @@
 </template>
 
 <script>
-import { reactive, ref, toRefs, watch, computed, onBeforeMount, onMounted } from "vue";
+import { reactive, ref, toRefs, onBeforeMount, onMounted } from "vue";
+import { useNumber } from "@/hooks/number";
+import { usePhrase } from "@/hooks/phrase";
 import AppAlert from "./components/Alert.vue";
 export default {
   name: "App",
   components: {
-    AppAlert
+    AppAlert,
   },
   setup() {
     const btn = ref(null);
@@ -32,30 +34,9 @@ export default {
       });
     });
 
-    //ref is for primitive values and accessed via the value property
-    let num = ref(0);
-
-    function increment() {
-      num.value++;
-    }
-
-    const double = computed(() => {
-      return num.value * 2;
-    });
-
     //reactive is for objects
     let user = reactive({ name: "charles", age: 25 });
     setTimeout(() => (user.name = "john"), 3000);
-
-    const phrase = ref("");
-    const reversedPhrase = ref("");
-
-    watch(() => {
-      reversedPhrase.value = phrase.value
-        .split("")
-        .reverse()
-        .join("");
-    });
 
     /* watch([phrase], ([newVal], [oldVal]) => {
        reversedPhrase.value = phrase.value
@@ -64,7 +45,10 @@ export default {
         .join("");
      });*/
 
+    const { num, increment, double } = useNumber();
+    const { phrase, reversedPhrase, num: phraseNum } = usePhrase();
     return {
+      phraseNum,
       num,
       increment,
       ...toRefs(user),
@@ -72,8 +56,8 @@ export default {
       reversedPhrase,
       double,
       user,
-      btn
+      btn,
     };
-  }
+  },
 };
 </script>
